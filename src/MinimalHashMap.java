@@ -18,10 +18,10 @@ public class MinimalHashMap<K,V> {
     private static class Entry<K,V>{
     	
     	/** The key for this entry **/
-    	private K key;
+    	public K key;
     	
     	/** The value of this entry **/
-    	private V value;
+    	public V value;
     	
     	public Entry(K Key, V Value){
     		key = Key;
@@ -35,6 +35,9 @@ public class MinimalHashMap<K,V> {
     
     /** Contains the entries in the Map **/
     private Entry<K,V>[] entries;
+    
+    /** The number of elements currently in this Hash Map **/
+    private int size = 0;
     
     /*
      * Special Constructor if you know roughly how many
@@ -54,7 +57,7 @@ public class MinimalHashMap<K,V> {
      */
     private void resize(int size){
     	//rewrite to include all the previous entries
-    	Entry[] tempEntries = entries;
+    	Entry<K,V>[] tempEntries = entries;
     	entries = new Entry[size];
     	for(int i = 0;i<tempEntries.length;i++)
     		put((K) tempEntries[i].key,(V) tempEntries[i].value);
@@ -68,13 +71,13 @@ public class MinimalHashMap<K,V> {
     public void put(K key, V value){
     	if(key == null)
     		return; // null keys not allowed
-    	int index = key.hashCode() % entries.length;
-    	if(index > entries.length)
+    	if(size >= entries.length){
     		resize(2*entries.length); // Double size if full
+    		size = size/2; // Fix the size after replacing elements
+    	}
+    	int index = key.hashCode() % entries.length;
     	if(entries[index] == null){
-    	  if(value == null) // Don't do anything for null values with non-null keys
-    		  return;
-    	  entries[key.hashCode() % entries.length] = new Entry<K, V>(key,value);
+    	  entries[index] = new Entry<K, V>(key,value);
     	}else{
     		//Linear probing for now;
     		while(entries[index] != null){
@@ -83,12 +86,13 @@ public class MinimalHashMap<K,V> {
     			if(entries[index] == null){
     				if(value == null)
     					break;
-    				entries[key.hashCode() % entries.length] = new Entry<K, V>(key,value);
+    				entries[index] = new Entry<K, V>(key,value);
     				break;
     			}
     			
     		}
     	}
+    	size++;
     }
     
     /**
@@ -97,19 +101,37 @@ public class MinimalHashMap<K,V> {
      * @return The element with Key key
      */
     public V get(K key){
+    	if(key == null)
+    		return null;
     	int index = key.hashCode() % entries.length;
     	int notFoundCount = 0;
     	notFoundCount++;
-    	if(entries[index].key == key) // Simply grab the element at the index
+    	if(entries[index].key == key){ // Simply grab the element at the index
+    		if(entries[index].value == null)
+    			return null;
     		return entries[index].value;
+    	}
     	while(notFoundCount < entries.length){
     		index++; // Probe linearly
     		index = index % entries.length;
-    		if(entries[index].key == key)
+    		if(entries[index] !=null && entries[index].key == key){
+    			if(entries[index].value == null)
+        			return null;
         		return entries[index].value;
+    		}
     		notFoundCount++;
     	}
     	return null;
     }
-
+    
+    /**
+     * Returns the number of key-value pairs stored
+     * in this hash map
+     * @return the number of key-value pairs
+     */
+    public int getNumElements(){
+    	return size;
+    }
+    
+    
 }
