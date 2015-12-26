@@ -13,7 +13,7 @@ public class MinimalHashMap<K,V> {
 
 	/*
 	 * A class that represents an individual Key-Value pair in
-	 * this Hashmap.
+	 * this Hash Map.
 	 */
     private static class Entry<K,V>{
     	
@@ -45,10 +45,12 @@ public class MinimalHashMap<K,V> {
      */
 	public MinimalHashMap(int size){
     	entries = new Entry[size];
+    	offsets = new int[entries.length];
     }
     
     public MinimalHashMap(){
     	entries = new Entry[10];
+    	offsets = new int[entries.length];
     }
     
     /**
@@ -58,9 +60,13 @@ public class MinimalHashMap<K,V> {
     private void resize(int size){
     	//rewrite to include all the previous entries
     	Entry<K,V>[] tempEntries = entries;
+    	int[] tempOffsets = offsets;
     	entries = new Entry[size];
-    	for(int i = 0;i<tempEntries.length;i++)
+    	offsets = new int[size]; //Resize offsets
+    	for(int i = 0;i<tempEntries.length;i++){
     		put((K) tempEntries[i].key,(V) tempEntries[i].value);
+    	}
+    	//Offsets are resetted by the put(K,V) method.
     }
     
     /**
@@ -78,10 +84,13 @@ public class MinimalHashMap<K,V> {
     	int index = key.hashCode() % entries.length;
     	if(entries[index] == null){
     	  entries[index] = new Entry<K, V>(key,value);
+    	  offsets[index] = 0; // No offset if there was no collision
     	}else{
     		//Linear probing for now;
+    		int offsetValue = 0; // Increment the salt value for every collision
     		while(entries[index] != null){
     			index++; 
+    			offsetValue++;
     			index = index % entries.length; //Probe linearly
     			if(entries[index] == null){
     				if(value == null)
@@ -91,6 +100,7 @@ public class MinimalHashMap<K,V> {
     			}
     			
     		}
+    		offsets[key.hashCode() % entries.length] = offsetValue;
     	}
     	size++;
     }
