@@ -64,7 +64,18 @@ public class HashMapTest {
 	}
 	
 	@Test
-	public void multipleValues(){
+	public void multipleValues1(){
+		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
+		TestEntry a = new TestEntry(1);
+		TestEntry b = new TestEntry(1);
+		h.put(a, "A");
+		h.put(b, "B");
+		assertEquals("A",h.get(a));
+		assertEquals("B",h.get(b));
+	}
+	
+	@Test
+	public void multipleValues2(){
 		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
 		TestEntry a = new TestEntry(1);
 		TestEntry b = new TestEntry(3);

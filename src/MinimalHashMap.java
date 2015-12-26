@@ -6,7 +6,7 @@
  * at the cost of extra memory to store these offset values.
  * 
  * @Author: Himanshu Kattelu
- * @Version: 12/19/2015
+ * @Version: 12/26/2015
  */
 
 public class MinimalHashMap<K,V> {
@@ -58,9 +58,8 @@ public class MinimalHashMap<K,V> {
      * @param size the specified number
      */
     private void resize(int size){
-    	//rewrite to include all the previous entries
+    	//Rewrite to include all the previous entries
     	Entry<K,V>[] tempEntries = entries;
-    	int[] tempOffsets = offsets;
     	entries = new Entry[size];
     	offsets = new int[size]; //Resize offsets
     	for(int i = 0;i<tempEntries.length;i++){
@@ -115,12 +114,13 @@ public class MinimalHashMap<K,V> {
     		return null;
     	int index = key.hashCode() % entries.length;
     	
-    	/*
+    	
     	Entry<K,V> e =  entries[(index + offsets[index]) % entries.length];
         if(e.key == key)
         	return e.value;
-        */	
         	
+        
+    	/*
     	int notFoundCount = 0;
     	notFoundCount++;
     	if(entries[index].key == key){ // Simply grab the element at the index
@@ -137,7 +137,8 @@ public class MinimalHashMap<K,V> {
         		return entries[index].value;
     		}
     		notFoundCount++;
-    	} 
+    	} */ 
+    	
     	return null;
     }
     
