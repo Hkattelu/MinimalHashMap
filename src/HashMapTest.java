@@ -137,5 +137,15 @@ public class HashMapTest {
 		}
 		assertEquals(123,h.getNumElements());
 	}
+	
+	@Test
+	public void overWrite(){
+		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
+		TestEntry entry1 = new TestEntry(4);
+		h.put(entry1, "Hello");
+		assertEquals("Hello", h.get(entry1));
+		h.put(entry1, "OverWritten");
+		assertEquals("OverWritten", h.get(entry1));
+	}
 
 }

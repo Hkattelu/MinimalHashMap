@@ -82,7 +82,7 @@ public class MinimalHashMap<K,V> {
     		size = size/2; // Fix the size after replacing elements
     	}
     	int index = key.hashCode() % entries.length;
-    	if(entries[index] == null){
+    	if(entries[index] == null || entries[index].key == key){
     	  entries[index] = new Entry<K, V>(key,value);
     	  offsets[index] = 0; // No offset if there was no collision
     	}else{
@@ -114,6 +114,13 @@ public class MinimalHashMap<K,V> {
     	if(key == null)
     		return null;
     	int index = key.hashCode() % entries.length;
+    	
+    	/*
+    	Entry<K,V> e =  entries[(index + offsets[index]) % entries.length];
+        if(e.key == key)
+        	return e.value;
+        */	
+        	
     	int notFoundCount = 0;
     	notFoundCount++;
     	if(entries[index].key == key){ // Simply grab the element at the index
@@ -130,7 +137,7 @@ public class MinimalHashMap<K,V> {
         		return entries[index].value;
     		}
     		notFoundCount++;
-    	}
+    	} 
     	return null;
     }
     
