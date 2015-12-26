@@ -20,5 +20,8 @@ In short, this is a method that removes collisions entirely from HashMaps which
 allows for consisten O(1) lookups. The downside is that it requires slightly more
 memory. 
 
-I have decided to make my own implementation of this "Minimal Perfect Hash Map"
-called the MinimalHashMap.
+# My Implementation
+The current version I have is just a ChainedHashMap with linear probing.
+It has some extra code about "offsets" which I thought would help with
+the Minimal Hash Map. However, I learned by error that it cannot be implemented
+this way. 

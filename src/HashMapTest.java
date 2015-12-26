@@ -49,7 +49,7 @@ public class HashMapTest {
 	}
 	
 	@Test
-	public void nullKey(){
+	public void hashCodeMod(){
 		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
 		TestEntry mod = new TestEntry(14);
 		h.put(mod, "Hello");
@@ -57,7 +57,7 @@ public class HashMapTest {
 	}
 	
 	@Test
-	public void hashCodeMod(){
+	public void nullKey(){
 		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
 		h.put(null, "Hello");
 		assertEquals(null,h.get(null)); // no null keys allowed
@@ -65,6 +65,7 @@ public class HashMapTest {
 	
 	@Test
 	public void multipleValues1(){
+		//1 collision
 		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
 		TestEntry a = new TestEntry(1);
 		TestEntry b = new TestEntry(1);
@@ -76,6 +77,7 @@ public class HashMapTest {
 	
 	@Test
 	public void multipleValues2(){
+		//1 collision and more values
 		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
 		TestEntry a = new TestEntry(1);
 		TestEntry b = new TestEntry(3);
@@ -93,6 +95,27 @@ public class HashMapTest {
 		assertEquals("B",h.get(b));
 		assertEquals("C",h.get(c));
 		assertEquals("D",h.get(d));
+		assertEquals("E",h.get(e));
+		assertEquals("F",h.get(f));
+	}
+	
+	@Test
+	public void multipleValues3(){
+		// Multiple values no collisions
+		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
+		TestEntry a = new TestEntry(1);
+		TestEntry b = new TestEntry(3);
+		TestEntry c = new TestEntry(5);
+		TestEntry e = new TestEntry(4);
+		TestEntry f = new TestEntry(9);
+		h.put(a,"A");
+		h.put(b,"B");
+		h.put(c,"C");
+		h.put(e,"E");
+		h.put(f,"F");
+		assertEquals("A",h.get(a));
+		assertEquals("B",h.get(b));
+		assertEquals("C",h.get(c));
 		assertEquals("E",h.get(e));
 		assertEquals("F",h.get(f));
 	}

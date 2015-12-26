@@ -33,6 +33,9 @@ public class MinimalHashMap<K,V> {
     /** Contains the offsets for searching up elements **/
     private int[] offsets;
     
+    /**Pair each key to its val **/
+    
+    
     /** Contains the entries in the Map **/
     private Entry<K,V>[] entries;
     
@@ -99,7 +102,9 @@ public class MinimalHashMap<K,V> {
     			}
     			
     		}
-    		offsets[key.hashCode() % entries.length] = offsetValue;
+    		
+    	offsets[key.hashCode() % entries.length] = offsetValue;
+
     	}
     	size++;
     }
@@ -112,15 +117,16 @@ public class MinimalHashMap<K,V> {
     public V get(K key){
     	if(key == null)
     		return null;
+    	
     	int index = key.hashCode() % entries.length;
     	
-    	
-    	Entry<K,V> e =  entries[(index + offsets[index]) % entries.length];
-        if(e.key == key)
-        	return e.value;
-        	
-        
     	/*
+    	if(offsets[index] >= 0){
+    	  Entry<K,V> e =  entries[(index + offsets[index]) % entries.length];
+          if(e.key == key)
+        	return e.value;
+    	}*/
+  
     	int notFoundCount = 0;
     	notFoundCount++;
     	if(entries[index].key == key){ // Simply grab the element at the index
@@ -137,7 +143,7 @@ public class MinimalHashMap<K,V> {
         		return entries[index].value;
     		}
     		notFoundCount++;
-    	} */ 
+    	}  
     	
     	return null;
     }
