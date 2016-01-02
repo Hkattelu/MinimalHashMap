@@ -17,36 +17,62 @@ public class MinimalHashMap<K,V> {
 	 * A class that represents an individual Bucket that
 	 * contains Key-value pairs in a Hashmap.
 	 */
-    private static class Bucket<K,V>{
+    private static class Bucket<E>{
     	
-    	/** The key for this entry **/
+    	/** The Entries in the bucket **/
+    	public ArrayList<E> entries = new ArrayList<E>();
+    	
+    	/** The number of entries in this bucket **/
+    	public int size = 0;
+    	
+    	public void put(E entry){
+    		entries.add(entry);
+    		size++;
+    	}
+    
+    }
+    
+    /*
+     * A class that represents a single Key-value pair
+     * inside the HashMap
+     */
+    private static class Entry<K,V>{
+    	
+    	/** The key of this entry **/
     	public K key;
     	
     	/** The value of this entry **/
-    	public ArrayList<V> values = new ArrayList<V>();
+    	private V value;
     	
-    	public Bucket(K Key){
+    	public Entry(K Key, V Value){
     		key = Key;
+    		value = Value;
     	}
     	
-    	public void put(V value){
-    		values.add(value);
+    	/**
+    	 * Return the value of this entry
+    	 * @return the value of this entry
+    	 */
+    	public V getValue(){
+    		return value;
     	}
-    
     }
     
     /** Contains the offsets for searching up elements **/
     private int[] salts;
     
     /** Contains the entries in the Map **/
-    private Bucket<K,V>[] buckets;
+    private Bucket<Entry>[] buckets;
+    
+    /** Contains the entries after a perfect hash function has been found **/
+    private V[] elements;
     
     /** The number of elements currently in this Hash Map **/
     private int size = 0;
     
-    /*
-     * Special Constructor if you know roughly how many
-     * elements will be contained in the HashMap before creation.
+    /**
+     * Construct a Minimal Hashmap that contains a specified number of elements
+     * @param size the number of elements contained
      */
 	public MinimalHashMap(int size){
     	buckets = new Bucket[size];
@@ -74,9 +100,38 @@ public class MinimalHashMap<K,V> {
     public void put(K key, V value){
     	if(key == null)
     		return; // null keys not allowed
-
-    	
+    	int index = key.hashCode() % buckets.length;
+    	if (buckets[index] == null)
+    		buckets[index] = new Bucket<Entry>();
+    	buckets[index].put(new Entry<K,V>(key,value));    	
     	size++;
+    }
+    
+    /**
+     * Finds the Hash function that allows for O(1) access. This
+     * should be called once after all elements are inserted and 
+     * the HashMap is full
+     */
+    public void form(){
+    	
+    	
+    	//Find the hash function
+    	for(int i=0; i< buckets.length;i++){
+    		
+    		if(buckets[i] == null){
+    			// Do nothing and go on to the next bucket
+    		}else if( buckets[i].size > 1){
+    			for(int j=0; j < buckets[i].entries.size();j++){
+    				
+    			}
+    		}else
+    		{
+    			// If a bucket has one element, then there was no collision
+    			// to begin with and we can simply place it in the original spot
+    			salts[i] = 0 - i - 1;
+    			elements[i] = (V) buckets[i].entries.get(0).getValue();
+    		}
+    	}
     }
     
     /**
