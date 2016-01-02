@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /*
  * A special version of a Chained HashMap in which the
  * probing is modified such that lookups for an element are
@@ -12,32 +14,32 @@
 public class MinimalHashMap<K,V> {
 
 	/*
-	 * A class that represents an individual Key-Value pair in
-	 * this Hash Map.
+	 * A class that represents an individual Bucket that
+	 * contains Key-value pairs in a Hashmap.
 	 */
-    private static class Entry<K,V>{
+    private static class Bucket<K,V>{
     	
     	/** The key for this entry **/
     	public K key;
     	
     	/** The value of this entry **/
-    	public V value;
+    	public ArrayList<V> values = new ArrayList<V>();
     	
-    	public Entry(K Key, V Value){
+    	public Bucket(K Key){
     		key = Key;
-    		value = Value;
+    	}
+    	
+    	public void put(V value){
+    		values.add(value);
     	}
     
     }
     
     /** Contains the offsets for searching up elements **/
-    private int[] offsets;
-    
-    /**Pair each key to its val **/
-    
+    private int[] salts;
     
     /** Contains the entries in the Map **/
-    private Entry<K,V>[] entries;
+    private Bucket<K,V>[] buckets;
     
     /** The number of elements currently in this Hash Map **/
     private int size = 0;
@@ -47,13 +49,13 @@ public class MinimalHashMap<K,V> {
      * elements will be contained in the HashMap before creation.
      */
 	public MinimalHashMap(int size){
-    	entries = new Entry[size];
-    	offsets = new int[entries.length];
+    	buckets = new Bucket[size];
+    	salts = new int[buckets.length];
     }
     
     public MinimalHashMap(){
-    	entries = new Entry[10];
-    	offsets = new int[entries.length];
+    	buckets = new Bucket[10];
+    	salts = new int[buckets.length];
     }
     
     /**
@@ -61,14 +63,7 @@ public class MinimalHashMap<K,V> {
      * @param size the specified number
      */
     private void resize(int size){
-    	//Rewrite to include all the previous entries
-    	Entry<K,V>[] tempEntries = entries;
-    	entries = new Entry[size];
-    	offsets = new int[size]; //Resize offsets
-    	for(int i = 0;i<tempEntries.length;i++){
-    		put((K) tempEntries[i].key,(V) tempEntries[i].value);
-    	}
-    	//Offsets are resetted by the put(K,V) method.
+    	
     }
     
     /**
@@ -79,33 +74,8 @@ public class MinimalHashMap<K,V> {
     public void put(K key, V value){
     	if(key == null)
     		return; // null keys not allowed
-    	if(size >= entries.length){
-    		resize(2*entries.length); // Double size if full
-    		size = size/2; // Fix the size after replacing elements
-    	}
-    	int index = key.hashCode() % entries.length;
-    	if(entries[index] == null || entries[index].key == key){
-    	  entries[index] = new Entry<K, V>(key,value);
-    	  offsets[index] = 0; // No offset if there was no collision
-    	}else{
-    		//Linear probing for now;
-    		int offsetValue = 0; // Increment the salt value for every collision
-    		while(entries[index] != null){
-    			index++; 
-    			offsetValue++;
-    			index = index % entries.length; //Probe linearly
-    			if(entries[index] == null){
-    				if(value == null)
-    					break;
-    				entries[index] = new Entry<K, V>(key,value);
-    				break;
-    			}
-    			
-    		}
-    		
-    	offsets[key.hashCode() % entries.length] = offsetValue;
 
-    	}
+    	
     	size++;
     }
     
@@ -117,33 +87,6 @@ public class MinimalHashMap<K,V> {
     public V get(K key){
     	if(key == null)
     		return null;
-    	
-    	int index = key.hashCode() % entries.length;
-    	
-    	/*
-    	if(offsets[index] >= 0){
-    	  Entry<K,V> e =  entries[(index + offsets[index]) % entries.length];
-          if(e.key == key)
-        	return e.value;
-    	}*/
-  
-    	int notFoundCount = 0;
-    	notFoundCount++;
-    	if(entries[index].key == key){ // Simply grab the element at the index
-    		if(entries[index].value == null)
-    			return null;
-    		return entries[index].value;
-    	}
-    	while(notFoundCount < entries.length){
-    		index++; // Probe linearly
-    		index = index % entries.length;
-    		if(entries[index] !=null && entries[index].key == key){
-    			if(entries[index].value == null)
-        			return null;
-        		return entries[index].value;
-    		}
-    		notFoundCount++;
-    	}  
     	
     	return null;
     }

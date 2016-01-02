@@ -17,11 +17,10 @@ by using a method called Minimal perfect hashing. You can read about it here:
 http://blog.demofox.org/2015/12/14/o1-data-lookups-with-minimal-perfect-hashing/
 
 In short, this is a method that removes collisions entirely from HashMaps which
-allows for consisten O(1) lookups. The downside is that it requires slightly more
+allows for consistent O(1) lookups. The downside is that it requires slightly more
 memory. 
 
 # My Implementation
-The current version I have is just a ChainedHashMap with linear probing.
-It has some extra code about "offsets" which I thought would help with
-the Minimal Hash Map. However, I learned by error that it cannot be implemented
-this way. 
+
+My Implementation of the Map follows the same idea as in the article although there
+are a few ways in which it is fundamentally different.
