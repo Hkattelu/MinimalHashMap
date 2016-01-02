@@ -77,20 +77,16 @@ public class MinimalHashMap<K,V> {
      */
 	public MinimalHashMap(int size){
     	buckets = new Bucket[size];
-    	salts = new int[buckets.length];
+    	salts = new int[size];
     }
     
     public MinimalHashMap(){
     	buckets = new Bucket[10];
-    	salts = new int[buckets.length];
+    	salts = new int[10];
     }
     
-    /**
-     * Resize the HashMap to hold a specified number of elements
-     * @param size the specified number
-     */
-    private void resize(int size){
-    	
+    public Bucket getBucket(){
+    	return buckets[0];
     }
     
     /**
@@ -114,7 +110,6 @@ public class MinimalHashMap<K,V> {
      * the HashMap is full
      */
     public void form(){
-    	
     	
     	//Find the hash function
     	for(int i=0; i< buckets.length;i++){
@@ -142,6 +137,13 @@ public class MinimalHashMap<K,V> {
     					}
     				}		
     			}
+    			
+    			for(int j=0;j<buckets[i].entries.size();j++){
+					//Hash the salt with the key and see if you get an empty slot
+					index = Arrays.asList(buckets[i].entries.get(j).key,salt).hashCode() % buckets.length;
+					System.out.println("" + index);
+					elements[index] = (V) buckets[i].entries.get(j).value;
+				}	
     		}else
     		{
     			// If a bucket has one element, then there was no collision
@@ -163,7 +165,10 @@ public class MinimalHashMap<K,V> {
     	int index = key.hashCode() % buckets.length; 
     	//Positive salt, hash the salt with the key again to find the index
     	if(salts[index] >= 0){
-    		return elements[Arrays.asList(key,salts[index]).hashCode() % buckets.length];
+    		System.out.println("SALT : " + salts[index] + "MEme: " + key);
+    		index = Arrays.asList(key,salts[index]).hashCode() % buckets.length;
+    		System.out.println("" + index);
+    		return elements[index];
     	}else{
     	//Negative salt, the index has been found	
     		return elements[index];
@@ -179,6 +184,11 @@ public class MinimalHashMap<K,V> {
      */
     public int getNumElements(){
     	return size;
+    }
+    
+    public static void main(String[] args){
+    	MinimalHashMap<Integer,String> h = new MinimalHashMap<Integer,String>();
+    	System.out.println(h.getBucket().size);
     }
     
     
