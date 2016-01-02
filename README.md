@@ -36,7 +36,7 @@ to get an item out of it in constant time.
 
 There are a couple of things to note about the MinimalHashMap as it is special.
 
-1. You cannot "over write" a value by calling .put() with the same value.
+1. You cannot "over write" a value by calling .put() with the same key.
 
 2. You should only use this when you need a fast access data structure and you have
    all of the elements that you are searching over. It is slow to enter new elements and
