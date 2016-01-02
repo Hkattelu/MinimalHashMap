@@ -43,7 +43,7 @@ public class HashMapTest {
 	public void nullValue2(){
 		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
 		TestEntry t = new TestEntry(4);
-		TestEntry r = new TestEntry(4);
+		TestEntry r = new TestEntry(14);
 		h.put(t,null);
 		h.put(r, "Hello");
 		h.form();
@@ -73,7 +73,7 @@ public class HashMapTest {
 		//1 collision
 		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
 		TestEntry a = new TestEntry(1);
-		TestEntry b = new TestEntry(1);
+		TestEntry b = new TestEntry(11);
 		h.put(a, "A");
 		h.put(b, "B");
 		h.form();
@@ -89,7 +89,7 @@ public class HashMapTest {
 		TestEntry b = new TestEntry(3);
 		TestEntry c = new TestEntry(5);
 		TestEntry d = new TestEntry(4);
-		TestEntry e = new TestEntry(4);
+		TestEntry e = new TestEntry(14);
 		TestEntry f = new TestEntry(9);
 		h.put(a,"A");
 		h.put(b,"B");

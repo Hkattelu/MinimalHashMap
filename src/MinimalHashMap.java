@@ -66,7 +66,7 @@ public class MinimalHashMap<K,V> {
     private Bucket<Entry>[] buckets;
     
     /** Contains the entries after a perfect hash function has been found **/
-    private V[] elements;
+    private Entry[] elements;
     
     /** The number of elements currently in this Hash Map **/
     private int size = 0;
@@ -78,13 +78,13 @@ public class MinimalHashMap<K,V> {
 	public MinimalHashMap(int size){
     	buckets = new Bucket[size];
     	salts = new int[size];
-    	elements = (V[]) new Object[size];
+    	elements = new Entry[size];
     }
     
     public MinimalHashMap(){
     	buckets = new Bucket[10];
     	salts = new int[10];
-    	elements = (V[]) new Object[10];
+    	elements = new Entry[10];
     }
 
     /**
@@ -117,36 +117,43 @@ public class MinimalHashMap<K,V> {
     		}else if( buckets[i].size > 1){
     			// For each element in the bucket, try salt values until the salt value
     			// ,when hashed with the element, will give the index of an empty slot
-    			boolean hashFound = false;
+    			boolean hashFuncFound = false;
     			int index = i;
-				int salt = -1;
-    			while(!hashFound){
+				int salt = 0;
+    			while(!hashFuncFound){
+    				//"FILL" The holes as you calculate salts
+    				int[] filled = new int[buckets.length]; // 1 means it will be filled
+    				
     				//Increment salt if it didn't work on the last loop
     				salt++;
-    				hashFound = true;
+    				hashFuncFound = true;
+    				
     				// A salt should be found that will put all elements in empty slots
     				for(int j=0;j<buckets[i].entries.size();j++){
     					//Hash the salt with the key and see if you get an empty slot
-    					index = Arrays.asList(buckets[i].entries.get(j).key,salt).hashCode() % buckets.length;
-    					if(buckets[index] != null){
+    					index = saltHash(buckets[i].entries.get(j).key,salt) % buckets.length;
+    					if(buckets[index] != null || filled[index] == 1){
     					  // This salt value does not work, try again with an incremented salt.
-    					  hashFound = false;
+    					  hashFuncFound = false;
     					  break;
     					}
+    					filled[index] = 1;
     				}		
     			}
+    			
+    			salts[i] = salt;
     			//Lastly, place the values where they belong
     			for(int j=0;j<buckets[i].entries.size();j++){
-					index = Arrays.asList(buckets[i].entries.get(j).key,salt).hashCode() % buckets.length;
-					elements[index] = (V) buckets[i].entries.get(j).getValue();
+					index = saltHash(buckets[i].entries.get(j).key,salt) % buckets.length;
+					elements[index] = buckets[i].entries.get(j);
 				}	
     			
     		}else{
     			// If a bucket has one element, then there was no collision
     			// to begin with and we can simply place it in the original spot
-    			System.out.println("NULL EXCEPTION HERE: size iS " + buckets[i].entries.get(0).getValue());
+    			
     			salts[i] = 0 - i - 1;
-    			elements[i] = (V) buckets[i].entries.get(0).getValue();
+    			elements[i] = buckets[i].entries.get(0);
     		}
     	}
     }
@@ -162,14 +169,14 @@ public class MinimalHashMap<K,V> {
     	int index = key.hashCode() % buckets.length; 
     	//Positive salt, hash the salt with the key again to find the index
     	if(salts[index] >= 0){
-    		index = Arrays.asList(key,salts[index]).hashCode() % buckets.length;
-    		return elements[index];
-    	}else{
-    	//Negative salt, the index has been found	
-    		return elements[index];
+    		index = saltHash(key,salts[index]) % buckets.length;
+
     	}
+
+    	if(elements[index].key.equals(key))
+			return (V) elements[index].getValue();
     	
-    	
+    	return null;
     }
     
     /**
@@ -179,6 +186,16 @@ public class MinimalHashMap<K,V> {
      */
     public int getNumElements(){
     	return size;
+    }
+    
+    /**
+     * A Hash function used to hash the given key with a salt value
+     * @param key the key to hash
+     * @param salt the salt value to hash
+     * @return the hashed key and salt
+     */
+    private int saltHash(Object key, int salt){
+    	return salt ^ key.hashCode();
     }
 
 }
