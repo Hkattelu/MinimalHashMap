@@ -28,7 +28,7 @@ public class MinimalHashMap<K,V> {
     	
     	public void put(E entry){
     		entries.add(entry);
-    		size++;
+    		this.size++;
     	}
     
     }
@@ -78,17 +78,15 @@ public class MinimalHashMap<K,V> {
 	public MinimalHashMap(int size){
     	buckets = new Bucket[size];
     	salts = new int[size];
+    	elements = (V[]) new Object[size];
     }
     
     public MinimalHashMap(){
     	buckets = new Bucket[10];
     	salts = new int[10];
+    	elements = (V[]) new Object[10];
     }
-    
-    public Bucket getBucket(){
-    	return buckets[0];
-    }
-    
+
     /**
      * Place an element into this Hashmap with Key key
      * @param key The key of the key-value pair to enter
@@ -137,17 +135,16 @@ public class MinimalHashMap<K,V> {
     					}
     				}		
     			}
-    			
+    			//Lastly, place the values where they belong
     			for(int j=0;j<buckets[i].entries.size();j++){
-					//Hash the salt with the key and see if you get an empty slot
 					index = Arrays.asList(buckets[i].entries.get(j).key,salt).hashCode() % buckets.length;
-					System.out.println("" + index);
-					elements[index] = (V) buckets[i].entries.get(j).value;
+					elements[index] = (V) buckets[i].entries.get(j).getValue();
 				}	
-    		}else
-    		{
+    			
+    		}else{
     			// If a bucket has one element, then there was no collision
     			// to begin with and we can simply place it in the original spot
+    			System.out.println("NULL EXCEPTION HERE: size iS " + buckets[i].entries.get(0).getValue());
     			salts[i] = 0 - i - 1;
     			elements[i] = (V) buckets[i].entries.get(0).getValue();
     		}
@@ -165,9 +162,7 @@ public class MinimalHashMap<K,V> {
     	int index = key.hashCode() % buckets.length; 
     	//Positive salt, hash the salt with the key again to find the index
     	if(salts[index] >= 0){
-    		System.out.println("SALT : " + salts[index] + "MEme: " + key);
     		index = Arrays.asList(key,salts[index]).hashCode() % buckets.length;
-    		System.out.println("" + index);
     		return elements[index];
     	}else{
     	//Negative salt, the index has been found	
@@ -185,11 +180,5 @@ public class MinimalHashMap<K,V> {
     public int getNumElements(){
     	return size;
     }
-    
-    public static void main(String[] args){
-    	MinimalHashMap<Integer,String> h = new MinimalHashMap<Integer,String>();
-    	System.out.println(h.getBucket().size);
-    }
-    
-    
+
 }

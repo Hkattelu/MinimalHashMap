@@ -144,15 +144,17 @@ public class HashMapTest {
 		for(int i = 0;i < 9;i++){
 			h.put(new TestEntry(i), "" + i);
 		}
+		h.form();
 		assertEquals(9,h.getNumElements());
 	}
 	
 	@Test
 	public void numElements2(){
-		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>();
+		MinimalHashMap<TestEntry,String> h = new MinimalHashMap<TestEntry,String>(123);
 		for(int i = 0;i < 123;i++){
 			h.put(new TestEntry(i), "" + i);
 		}
+		h.form();
 		assertEquals(123,h.getNumElements());
 	}
 
