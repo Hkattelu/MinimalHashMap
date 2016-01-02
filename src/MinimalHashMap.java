@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
  * A special version of a Chained HashMap in which the
@@ -121,8 +122,25 @@ public class MinimalHashMap<K,V> {
     		if(buckets[i] == null){
     			// Do nothing and go on to the next bucket
     		}else if( buckets[i].size > 1){
-    			for(int j=0; j < buckets[i].entries.size();j++){
-    				
+    			// For each element in the bucket, try salt values until the salt value
+    			// ,when hashed with the element, will give the index of an empty slot
+    			boolean hashFound = false;
+    			int index = i;
+				int salt = -1;
+    			while(!hashFound){
+    				//Increment salt if it didn't work on the last loop
+    				salt++;
+    				hashFound = true;
+    				// A salt should be found that will put all elements in empty slots
+    				for(int j=0;j<buckets[i].entries.size();j++){
+    					//Hash the salt with the key and see if you get an empty slot
+    					index = Arrays.asList(buckets[i].entries.get(j).key,salt).hashCode() % buckets.length;
+    					if(buckets[index] != null){
+    					  // This salt value does not work, try again with an incremented salt.
+    					  hashFound = false;
+    					  break;
+    					}
+    				}		
     			}
     		}else
     		{
@@ -142,8 +160,16 @@ public class MinimalHashMap<K,V> {
     public V get(K key){
     	if(key == null)
     		return null;
+    	int index = key.hashCode() % buckets.length; 
+    	//Positive salt, hash the salt with the key again to find the index
+    	if(salts[index] >= 0){
+    		return elements[Arrays.asList(key,salts[index]).hashCode() % buckets.length];
+    	}else{
+    	//Negative salt, the index has been found	
+    		return elements[index];
+    	}
     	
-    	return null;
+    	
     }
     
     /**
