@@ -152,7 +152,7 @@ public class MinimalHashMap<K,V> {
     			// If a bucket has one element, then there was no collision
     			// to begin with and we can simply place it in the original spot
     			
-    			salts[i] = 0 - i - 1;
+    			salts[i] = -1;
     			elements[i] = buckets[i].entries.get(0);
     		}
     	}
